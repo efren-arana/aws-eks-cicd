@@ -1,0 +1,60 @@
+services:
+  postgres_db:
+    container_name: postgres16
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+      - ./dbfiles:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    networks:
+      - net-postgres
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:latest
+    restart: always
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres_db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - net-postgres
+
+  #microservicio de facturacion
+  ws-billing:
+    container_name: ws-billing
+    image: webservice-billing
+#    build:
+#      context: ./
+#      dockerfile: ./msvc-cursos/Dockerfile
+    ports:
+      - "7080:7080"
+    environment:
+      PORT: 7080
+      DB_HOST: postgres16:5432
+      DB_DATABASE: billingapp_db
+      DB_USERNAME: billingapp
+      DB_PASSWORD: qwerty
+      #USUARIOS_URL: ec2-54-227-65-77.compute-1.amazonaws.com:8001
+    networks:
+      - net-postgres
+    depends_on:
+      - postgres_db
+    restart: always
+
+volumes:
+  data-postgres:
+    name: data-postgres
+
+networks:
+  net-postgres:
+    name: net-postgres

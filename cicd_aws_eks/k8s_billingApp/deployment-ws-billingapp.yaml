@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ws-billingapp-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ws-billingapp
+  template:
+    metadata:
+      labels:
+        app: ws-billingapp
+    spec:
+      containers:
+        - name: ws-billingapp
+          image: earanadocker/webservice-billing:latest
+          ports:
+            - containerPort: 7080
+              name: billingappbport
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ws-billingapp-configmap
+                  key: port
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ws-billingapp-configmap
+                  key: db_host
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: ws-billingapp-configmap
+                  key: database
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ws-billingapp-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ws-billingapp-secret
+                  key: password
