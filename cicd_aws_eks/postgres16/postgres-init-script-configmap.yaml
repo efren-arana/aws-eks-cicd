@@ -10,4 +10,5 @@ data:
     CREATE USER billingapp WITH PASSWORD 'qwerty';
     CREATE DATABASE billingapp_db;
     GRANT ALL PRIVILEGES ON DATABASE billingapp_db TO billingapp;
+  
    EOSQL

@@ -4,7 +4,9 @@ metadata:
   name: ws-billingapp-configmap
 data:
   port: "7080"
-  db_host: "postgres16-service:5432"
+#Obtener el nombre del host con el comando 
+#kubectl describe service [nombre del servicio]
+  db_host: "192.168.165.250:5432"
   database: billingapp_db
 #  username: postgres
 #  password: sasa
