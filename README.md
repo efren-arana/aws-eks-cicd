@@ -18,6 +18,45 @@ kubectl describe service postgres16-service
 service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 ```
 
+## Terraform
+**NOTAS:** Antes de ejecutar los comandos para crear la infraestructura debemos de tener configurado el usuario IAM con los respectivos permisos para crear los recursos del proyecto. Instalamos el CLI con las credenciales.
+
+Los recursos que vamos a crear en este proyecto son los siguientes:
+* Cluster EKS
+* AWS EFS
+* VPC
+
+Nos cambiamos la ruta ./Terraform y ejetamos los siguientes comandos para crear la infraestructura.
+```bash
+terraform init
+terraform apply -auto-approve
+
+#Una vez que validemos que el servicio este funcionando destruimos la infraestructura para evitar costos no presupuestados
+terraform destroy
+```
+## EKS Module Terraform
+El module de EKS crea de forma predeterminada los roles y politicas para el cluster y los nodegruops
+Habilitar assign public IPv4
+
+## AWS EFS Terraform
+Creamos el modulo de EFS y lo montamos en las subnets privadas 
+
+## Kubectl Kubernetes
+
+```bash
+#Comando awscli para conectarse al cluster de EKS
+aws eks --region us-east-1 update-kubeconfig --name [nombre-cluster]
+```
+
+Aplicamos los recursos en el siguiente Orden
+```bash
+#Primero, creamos la base de datos
+#Tenemos que modificar el archivo postgres-pv.yaml con el     #volumeHandle: [File System ID EFS]
+kubectl apply -f ./postgres16
+# Luego creamos el servicio Pgadmin para conectarnos probar la conexion en la base de datos
+kubectl apply -f ./pgadmin
+```
+
 ## Arquitectura
 
 - **Aplicación**: Spring Boot 3.2.3 (Java 17)
@@ -105,9 +144,7 @@ Debemos utilizar los siguientes complementos en el clúster
 
 - CSI (Container Storage Interface) Este driver permite que administren el ciclo de vida de los sistemas de archivos de Amazon EFS. 
 
-## Configurar AWS EFS
 
-## Despliegue en EKS
 
 ### 1. Crear almacenamiento
 ```bash

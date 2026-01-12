@@ -14,7 +14,7 @@ spec:
     - ReadWriteMany
   csi:
     driver: efs.csi.aws.com
-    volumeHandle: fs-0ccd6ec79b0a75e20
+    volumeHandle: [efs_file_system_id]
 #    - ReadWriteOnce
 #  hostPath:
 #    path: /var/lib/postgresql/data
